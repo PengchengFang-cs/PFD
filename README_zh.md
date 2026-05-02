@@ -1,4 +1,4 @@
-# PFD
+# Privileged Foresight Distillation: Zero-Cost Future Correction for World Action Models
 
 **Privileged Foresight Distillation: Zero-Cost Future Correction for World Action Models** 的代码发布仓库。
 

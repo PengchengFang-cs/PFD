@@ -1,4 +1,4 @@
-# PFD
+# Privileged Foresight Distillation: Zero-Cost Future Correction for World Action Models
 
 Code release for **Privileged Foresight Distillation: Zero-Cost Future Correction for World Action Models**.
 
