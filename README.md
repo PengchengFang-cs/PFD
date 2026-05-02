@@ -1,9 +1,15 @@
 # PFD
 
-Code release for **Privileged Foresight Distillation: Future-Free Correction for World Action Models**.
+Code release for **Privileged Foresight Distillation: Zero-Cost Future Correction for World Action Models**.
+
+[![arXiv](https://img.shields.io/badge/arXiv-2604.25859-b31b1b.svg)](https://arxiv.org/abs/2604.25859)
 
 [![English](https://img.shields.io/badge/README-English-111111.svg)](./README.md)
 [![Chinese](https://img.shields.io/badge/README-Chinese-d14836.svg)](./README_zh.md)
+
+Pengcheng Fang, Hongli Chen, Xiaohao Cai
+
+Paper: [arXiv:2604.25859](https://arxiv.org/abs/2604.25859) | [PDF](https://arxiv.org/pdf/2604.25859)
 
 PFD improves world-action models by distilling privileged future-conditioned training signals into a future-free action correction module. During deployment, the policy only uses the current observation history and does not require test-time future video generation.
 
@@ -180,4 +186,13 @@ This codebase builds on the FastWAM training and evaluation stack and includes a
 
 ## Citation
 
-Citation information will be added with the paper release.
+If you find this repository useful, please cite:
+
+```bibtex
+@article{fang2026pfd,
+  title={Privileged Foresight Distillation: Zero-Cost Future Correction for World Action Models},
+  author={Fang, Pengcheng and Chen, Hongli and Cai, Xiaohao},
+  journal={arXiv preprint arXiv:2604.25859},
+  year={2026}
+}
+```

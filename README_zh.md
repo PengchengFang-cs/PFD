@@ -1,9 +1,15 @@
 # PFD
 
-**Privileged Foresight Distillation: Future-Free Correction for World Action Models** 的代码发布仓库。
+**Privileged Foresight Distillation: Zero-Cost Future Correction for World Action Models** 的代码发布仓库。
+
+[![arXiv](https://img.shields.io/badge/arXiv-2604.25859-b31b1b.svg)](https://arxiv.org/abs/2604.25859)
 
 [![English](https://img.shields.io/badge/README-English-111111.svg)](./README.md)
 [![中文](https://img.shields.io/badge/README-Chinese-d14836.svg)](./README_zh.md)
+
+Pengcheng Fang, Hongli Chen, Xiaohao Cai
+
+论文：[arXiv:2604.25859](https://arxiv.org/abs/2604.25859) | [PDF](https://arxiv.org/pdf/2604.25859)
 
 PFD 的目标是在训练阶段利用带有未来信息的 privileged signal，蒸馏出一个部署时不需要未来视频生成的 action correction 模块。推理时，策略只使用当前观测历史，不需要 test-time future imagination。
 
@@ -168,4 +174,13 @@ python experiments/robotwin/run_robotwin_manager.py \
 
 ## 引用
 
-论文发布后会补充引用信息。
+如果这个仓库对你的研究有帮助，请引用：
+
+```bibtex
+@article{fang2026pfd,
+  title={Privileged Foresight Distillation: Zero-Cost Future Correction for World Action Models},
+  author={Fang, Pengcheng and Chen, Hongli and Cai, Xiaohao},
+  journal={arXiv preprint arXiv:2604.25859},
+  year={2026}
+}
+```
