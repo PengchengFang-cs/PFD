@@ -3,6 +3,9 @@
 **Privileged Foresight Distillation: Zero-Cost Future Correction for World Action Models** 的代码发布仓库。
 
 [![arXiv](https://img.shields.io/badge/arXiv-2604.25859-b31b1b.svg)](https://arxiv.org/abs/2604.25859)
+[![Hugging Face Model](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model-f7c843)](https://huggingface.co/AmberJar/PFD)
+[![Hugging Face Dataset - LIBERO](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset%20LIBERO-f7c843)](https://huggingface.co/datasets/yuanty/LIBERO-fastwam)
+[![Hugging Face Dataset - RoboTwin](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset%20RoboTwin-f7c843)](https://huggingface.co/datasets/yuanty/robotwin2.0-fastwam)
 
 [![English](https://img.shields.io/badge/README-English-111111.svg)](./README.md)
 [![中文](https://img.shields.io/badge/README-Chinese-d14836.svg)](./README_zh.md)
@@ -13,7 +16,7 @@ Pengcheng Fang, Hongli Chen, Xiaohao Cai
 
 PFD 的目标是在训练阶段利用带有未来信息的 privileged signal，蒸馏出一个部署时不需要未来视频生成的 action correction 模块。推理时，策略只使用当前观测历史，不需要 test-time future imagination。
 
-本仓库只包含 LIBERO / RoboTwin 上的训练与推理评测代码。checkpoint、数据集、日志、运行输出和内部实验记录不会放入 GitHub。
+本仓库包含 LIBERO / RoboTwin 上的训练与推理评测代码。已发布的 LIBERO checkpoint 放在 [Hugging Face](https://huggingface.co/AmberJar/PFD)，benchmark 数据沿用上方链接中的 FastWAM 预处理 LIBERO / RoboTwin 数据集。大文件 artifact、日志、运行输出和内部实验记录不会放入 GitHub。
 
 ## 目录结构
 
@@ -39,15 +42,23 @@ PFD-public/
 
 ## 环境安装
 
+PFD 当前沿用 [FastWAM](https://github.com/yuantianyuan01/FastWAM) 的运行环境。为了兼容已有配置和导入路径，Python package 仍然叫 `fastwam`，推荐按下面的已验证环境安装：
+
 ```bash
-conda create -n pfd python=3.10 -y
-conda activate pfd
+conda create -n fastwam python=3.10 -y
+conda activate fastwam
 pip install -U pip
 pip install torch==2.7.1+cu128 torchvision==0.22.1+cu128 --extra-index-url https://download.pytorch.org/whl/cu128
 pip install -e .
 ```
 
-LIBERO 和 RoboTwin 还需要各自的 simulator 环境。跑 benchmark 前请先按官方仓库完成安装。
+如果本地 CUDA 版本不同，请先安装匹配的 PyTorch / torchvision wheel，再安装本仓库。LIBERO 和 RoboTwin 还需要各自的 simulator 环境。LIBERO 评测请先按官方 [LIBERO](https://github.com/Lifelong-Robot-Learning/LIBERO) 仓库完成安装，并保持 MuJoCo 与数据版本一致：
+
+```bash
+pip install mujoco==3.3.2
+```
+
+RoboTwin 评测请按官方 [RoboTwin](https://github.com/RoboTwin-Platform/RoboTwin) 仓库完成环境和 assets 安装。
 
 ## 模型准备
 
@@ -70,7 +81,41 @@ python scripts/preprocess_action_dit_backbone.py \
 
 生成的 backbone 属于本地 artifact，不会进入 Git。
 
-## 数据集
+## 数据集下载
+
+PFD 使用 FastWAM 预处理后的 benchmark 数据集。
+
+### LIBERO
+
+从 Hugging Face 下载 LIBERO 压缩包：
+
+- https://huggingface.co/datasets/yuanty/LIBERO-fastwam
+
+然后解压到 `data/libero_mujoco3.3.2`：
+
+```bash
+mkdir -p data/libero_mujoco3.3.2
+cd data/libero_mujoco3.3.2
+
+for f in *.tar.gz; do
+  tar -xzf "$f"
+done
+```
+
+### RoboTwin
+
+从 Hugging Face 下载 RoboTwin 分片压缩包：
+
+- https://huggingface.co/datasets/yuanty/robotwin2.0-fastwam
+
+然后拼接并解压：
+
+```bash
+mkdir -p data/robotwin2.0
+cd data/robotwin2.0
+
+cat robotwin2.0.tar.gz.part-* | tar -xzf -
+```
 
 配置默认使用下面的相对路径：
 
@@ -90,6 +135,44 @@ data/
 ```
 
 数据文件不会放进本仓库。
+
+## 使用已发布 Checkpoint 推理
+
+PFD 的 LIBERO checkpoint 已发布在 [Hugging Face](https://huggingface.co/AmberJar/PFD)。该 checkpoint 对应 `fastwam_pfd_action512_partial` 配置，并训练了最后 12 层 action layers 与最后 12 层 video layers。
+
+```bash
+pip install -U huggingface_hub
+
+huggingface-cli download AmberJar/PFD \
+  libero_pfd_action512_partial_12x12_step62000.pt \
+  dataset_stats.json \
+  config.yaml \
+  manifest.json \
+  --local-dir ./checkpoints/pfd_release
+```
+
+下载后的本地结构应为：
+
+```text
+checkpoints/pfd_release/
+├── libero_pfd_action512_partial_12x12_step62000.pt
+├── dataset_stats.json
+├── config.yaml
+└── manifest.json
+```
+
+评测已发布的 LIBERO checkpoint：
+
+```bash
+python experiments/libero/run_libero_manager.py \
+  task=libero_uncond_2cam224_1e-4 \
+  model=fastwam_pfd_action512_partial \
+  ckpt=./checkpoints/pfd_release/libero_pfd_action512_partial_12x12_step62000.pt \
+  EVALUATION.dataset_stats_path=./checkpoints/pfd_release/dataset_stats.json \
+  MULTIRUN.num_gpus=8
+```
+
+该 checkpoint 的 LIBERO 全套评测结果为 `1962/2000 = 98.10%`。
 
 ## 训练
 
@@ -134,6 +217,7 @@ python experiments/libero/run_libero_manager.py \
   task=libero_uncond_2cam224_1e-4 \
   model=fastwam_pfd_action512_partial \
   ckpt=/path/to/pfd_checkpoint.pt \
+  EVALUATION.dataset_stats_path=/path/to/dataset_stats.json \
   MULTIRUN.num_gpus=8
 ```
 
@@ -150,12 +234,13 @@ python experiments/robotwin/run_robotwin_manager.py \
   task=robotwin_uncond_3cam_384_1e-4 \
   model=fastwam_pfd_action512_partial \
   ckpt=/path/to/pfd_checkpoint.pt \
+  EVALUATION.dataset_stats_path=/path/to/dataset_stats.json \
   MULTIRUN.num_gpus=8
 ```
 
 ## Checkpoint 说明
 
-本 GitHub 仓库暂时不包含 checkpoint。请把本地或后续发布的权重放到 `./checkpoints`，或通过命令行传入绝对路径。
+本 GitHub 仓库不直接存放大 checkpoint 文件。已发布权重托管在 [Hugging Face](https://huggingface.co/AmberJar/PFD)。本地下载或新训练的权重可以放到 `./checkpoints`，也可以通过 Hydra 命令行传入绝对路径。评测时请通过 `EVALUATION.dataset_stats_path` 传入匹配的 `dataset_stats.json`，或把它放在 checkpoint 同级目录。
 
 以下内容不会进入 Git：
 
