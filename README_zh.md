@@ -42,11 +42,11 @@ PFD-public/
 
 ## 环境安装
 
-PFD 当前沿用 [FastWAM](https://github.com/yuantianyuan01/FastWAM) 的运行环境。为了兼容已有配置和导入路径，Python package 仍然叫 `fastwam`，推荐按下面的已验证环境安装：
+推荐按下面的已验证环境安装：
 
 ```bash
-conda create -n fastwam python=3.10 -y
-conda activate fastwam
+conda create -n pfd python=3.10 -y
+conda activate pfd
 pip install -U pip
 pip install torch==2.7.1+cu128 torchvision==0.22.1+cu128 --extra-index-url https://download.pytorch.org/whl/cu128
 pip install -e .
@@ -267,5 +267,17 @@ python experiments/robotwin/run_robotwin_manager.py \
   author={Fang, Pengcheng and Chen, Hongli and Cai, Xiaohao},
   journal={arXiv preprint arXiv:2604.25859},
   year={2026}
+}
+```
+
+本实现基于 FastWAM 的训练和评测框架。如果使用了这部分代码栈，也请引用 FastWAM：
+
+```bibtex
+@article{yuan2026fastwam,
+  title={Fast-WAM: Do World Action Models Need Test-time Future Imagination?},
+  author={Tianyuan Yuan and Zibin Dong and Yicheng Liu and Hang Zhao},
+  journal={arXiv preprint arXiv:2603.16666},
+  year={2026},
+  url={https://arxiv.org/abs/2603.16666}
 }
 ```

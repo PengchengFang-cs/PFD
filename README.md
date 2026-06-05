@@ -55,11 +55,11 @@ The Python package is still named `fastwam` for compatibility with the original 
 
 ## Environment
 
-PFD currently follows the same runtime environment as [FastWAM](https://github.com/yuantianyuan01/FastWAM). The Python package is still named `fastwam`, so a known-good setup is:
+A known-good setup is:
 
 ```bash
-conda create -n fastwam python=3.10 -y
-conda activate fastwam
+conda create -n pfd python=3.10 -y
+conda activate pfd
 pip install -U pip
 pip install torch==2.7.1+cu128 torchvision==0.22.1+cu128 --extra-index-url https://download.pytorch.org/whl/cu128
 pip install -e .
@@ -280,5 +280,17 @@ If you find this repository useful, please cite:
   author={Fang, Pengcheng and Chen, Hongli and Cai, Xiaohao},
   journal={arXiv preprint arXiv:2604.25859},
   year={2026}
+}
+```
+
+This implementation builds on FastWAM. If you use the inherited training and evaluation stack, please also cite:
+
+```bibtex
+@article{yuan2026fastwam,
+  title={Fast-WAM: Do World Action Models Need Test-time Future Imagination?},
+  author={Tianyuan Yuan and Zibin Dong and Yicheng Liu and Hang Zhao},
+  journal={arXiv preprint arXiv:2603.16666},
+  year={2026},
+  url={https://arxiv.org/abs/2603.16666}
 }
 ```
